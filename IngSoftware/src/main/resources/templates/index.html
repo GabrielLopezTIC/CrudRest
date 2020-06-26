@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Crud Rest</title>
+	<meta charset="UTF-8">
 
 	<script
 	src="https://code.jquery.com/jquery-3.5.1.js"
@@ -237,7 +238,13 @@
 
 
 							$("#tbodyusuarios").html(lista);
-						}
+						},
+						complete: function(xhr, textStatus) {
+							if (xhr.status == 404){
+								alert("No existe el alumno");
+							}
+
+						} 
 					});
 
 				}else{
@@ -262,13 +269,17 @@
 
 						},
 						complete: function(xhr, textStatus) {
-							if (xhr.status >= 200 && xhr.status <300){
+							if (xhr.status == 200 || xhr.status == 201){
 								alert("Alumno Borrado");
 							}else{
-								alert("Error al borrar alumno");
+								if (xhr.status == 404){
+									alert("No existe el alumno");
+								}else{
+									alert("Error al borrar alumno");
+								}
 							}
 							console.log(xhr.status);
-						} 
+						}
 					});
 				}else{
 					alert("La matricula esta en blanco");
@@ -302,7 +313,7 @@
 
 						},
 						complete: function(xhr, textStatus) {
-							if (xhr.status >= 200 && xhr.status <300 ){
+							if (xhr.status == 200 || xhr.status == 201){
 								alert("Alumno Añadido");
 							}else{
 								alert("Error al añadir alumno");
@@ -341,12 +352,15 @@
 						console.log(response);
 					},
 					complete: function(xhr, textStatus) {
-						if (xhr.status >= 200 && xhr.status <300){
+						if (xhr.status == 200 || xhr.status == 201){
 							alert("Alumno Modificado");
 						}else{
-							alert("Error al modificar alumno");
+							if(xhr.status == 404){
+								alert("No existe el alumno");
+							}else{
+								alert("Error al modificar alumno");
+							}
 						}
-						console.log(xhr.status);
 					} 
 				});
 				}else{

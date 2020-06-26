@@ -78,7 +78,12 @@ public class AlumnoController {
     @GetMapping(path = "/alumnos/{matricula}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> retrieve(@PathVariable("matricula") Integer matricula) {
 	log.info("Buscando al alumno con matricula " + matricula);
-	return ResponseEntity.status(HttpStatus.OK).body(alumnoService.findByMatricula(matricula));
+	if(alumnoService.findByMatricula(matricula) != null) {
+	    return ResponseEntity.status(HttpStatus.OK).body(alumnoService.findByMatricula(matricula));
+	}else {
+	    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No existe el alumno");
+	}
+	
 
     }
 
@@ -115,6 +120,9 @@ public class AlumnoController {
      */
     @DeleteMapping("/alumnos/{matricula}")
     public ResponseEntity<?> delete(@PathVariable("matricula") Integer matricula) {
+	if(matricula == null) {
+	    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Datos recibidos nulos");
+	}
 	log.info("Borrando alumno matricula: "+matricula);
 
 	Alumno alumno = alumnoService.findByMatricula(matricula);
