@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Crud Rest</title>
+
+	<script
+	src="https://code.jquery.com/jquery-3.5.1.js"
+	integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+	crossorigin="anonymous"></script>
+	
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<style type="text/css">
+		.addAlumno{
+			border-width: 2px;
+			border-style: solid;
+			border-color: black;
+			border-radius: 5px;
+		}
+
+		.addAlumno label{
+			color: white;
+		}
+
+		.imgAlumn{
+			display:block;
+			margin:auto;
+		}
+
+	</style>
+</head>
+<body>
+	<div class="row mt-1">
+		<div class="col-sm-4">
+			<img class="imgAlumn" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQPuqjcgCgTS1bX7vt0Efl4UY5o-5WtCS-4Zw&usqp=CAU">
+		</div>
+		<div class="col-sm-4 ">
+			<div class="addAlumno mt-2 pt-2 pl-1 pb-1 bg bg-dark "> 
+				<form>
+					<div class="form-group">
+						<label>Matricula: </label>
+						<input type="text" name="matricula" id="matricula" placeholder="Matricula" class="matricula form-control-sm">
+					</div>
+					<div class="form-group">
+						<label>Nombre: </label>
+						<input type="text" name="nombre" id="nombre" placeholder="Nombre" class="nombre 
+						form-control-sm">
+					</div>
+					<div class="form-group">
+						<label>Carrera: </label>
+						<input type="text" name="carrera" id="carrera" placeholder="Carrera" class="carrera
+						form-control-sm"> 
+					</div>
+					<div class="form-group">
+						<input type="button" name="add" id="add" value="Agregar" class="add btn btn-success form-control-sm"
+						onclick="addAlumno($('#matricula').val(), $('#nombre').val(), $('#carrera').val())">
+						<input type="button" name="update" id="update" value="Editar" class="update btn btn-primary form-control-sm"
+						onclick="updateAlumno($('#matricula').val(), $('#nombre').val(), $('#carrera').val())">
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="col-sm-4">
+		</div>
+	</div> 
+	<div class="row">
+		<div class="col-sm-6 mt-1">
+			<form class="form-group form-inline">
+				<label>Buscar Alumno: </label>
+				<input type="text" name="findMat" id="findMat" placeholder="Matricula" class="findMat
+				form-control-sm ml-1">
+				<input type="button" name="findMatButton" id="findMatButton" value="Buscar" class="findMattButton  btn btn-primary ml-1" onclick="findMatAlumnoButton($('#findMat').val())">
+				<input type="button" name="findAll" id="findAll" value="Find All" class="findAllButton btn btn-secondary form-control-sm ml-1" onclick="findAllAlumnos()">
+			</form>
+		</div>
+		<div class="col-sm-6 mt-1">
+			<form class="form-check-inline">
+				<label class="col-form-label">Eliminar alumno: </label>
+				<input type="text" name="delMat" id="delMat" placeholder="Matricula" class="delMat
+				form-control-sm ml-1">
+				<input type="button" name="delMatButton" id="delMatButton" value="Borrar" class="delMattButton btn btn-danger form-control-sm ml-1" onclick="delMatAlumnoButton($('#delMat').val())">
+			</form> 
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<table border="1" class="table table-dark table-hover">
+				<thead>
+					<tr>
+						<th>Matricula</th>
+						<th>Nombre</th>
+						<th>Carrera</th>
+					</tr>
+				</thead>
+				<tbody id="tbodyusuarios">
+				</tbody>
+			</table> 
+		</div>
+	</div>
+
+
+
+	
+	
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	<script type="text/javascript">
+
+
+		$(document).ready(
+			function() {
+
+				/*controla los caracteres para guardar el nombre de la version*/
+				jQuery('.delMat').keypress(
+					function(tecla){
+						if( (tecla.charCode > 47 && tecla.charCode < 58)
+							){
+							return true;
+					}else{
+						return false;
+					}
+				});
+				jQuery('.findMat').keypress(
+					function(tecla){
+						if( (tecla.charCode > 47 && tecla.charCode < 58)
+							){
+							return true;
+					}else{
+						return false;
+					}
+				});
+				jQuery('.matricula').keypress(
+					function(tecla){
+						if( (tecla.charCode > 47 && tecla.charCode < 58)
+							){
+							return true;
+					}else{
+						return false;
+					}
+				});
+				jQuery('.nombre').keypress(
+					function(tecla){
+						if( ((tecla.charCode > 64 && tecla.charCode <91) ||
+							(tecla.charCode > 96 && tecla.charCode <123) || tecla.charCode == 241 || tecla.charCode == 209 || tecla.charCode == 32
+							)){
+							return true;
+					}else{
+						return false;
+					}
+				});
+				jQuery('.carrera').keypress(
+					function(tecla){
+						if( ((tecla.charCode > 64 && tecla.charCode <91) ||
+							(tecla.charCode > 96 && tecla.charCode <123) || tecla.charCode == 241 || tecla.charCode == 209 || tecla.charCode == 32
+							)){
+							return true;
+					}else{
+						return false;
+					}
+				});
+			});
+
+
+
+
+		function findAllAlumnos(){
+			$.ajax
+			({
+				type: "get",
+				url: "http://localhost:8080/v1/alumnos",
+				dataType: 'json',
+				success: function (response){
+					if(response.length == 0){
+						alert("No hay alumnos registrados");
+					}else{
+						if(response != null){
+						var lista= ""
+
+						for(i=0; i < response.length;i++){
+							lista = lista 
+							+"<tr>"
+							+"<td>"+response[i].matricula+"</td>"
+							+"<td>"+response[i].nombre+"</td>"
+							+"<td>"+response[i].carrera+"</td>"
+							+"</tr>";
+						}
+
+						$("#tbodyusuarios").html(lista);
+						console.log(response);
+					}else{
+						alert("Algo salio mal");
+					}
+
+					}	
+				}
+			});
+			
+		}
+
+		function findMatAlumnoButton(matricula){
+			if (matricula < 2147483647) {
+				if (matricula.length != 0) {
+					$.ajax
+					({
+						type: "get",
+						url: "http://localhost:8080/v1/alumnos/"+matricula,
+						dataType: 'json',
+						success: function (response){
+							var lista= ""
+							+"<tr>"
+							+"<td>"+response.matricula+"</td>"
+							+"<td>"+response.nombre+"</td>"
+							+"<td>"+response.carrera+"</td>"
+							+"</tr>";
+
+
+							$("#tbodyusuarios").html(lista);
+						}
+					});
+
+				}else{
+					alert("La matricula esta en blanco");
+				}
+				
+			}else{
+				alert("La matricula excede el cupo")
+			}
+			
+		}
+
+		function delMatAlumnoButton(matricula){
+			if (matricula < 2147483647) {
+				if (matricula.length != 0) {
+					$.ajax
+					({
+						type: "delete",
+						url: "http://localhost:8080/v1/alumnos/"+matricula,
+						dataType: 'json',
+						success: function(response) {
+
+						},
+						complete: function(xhr, textStatus) {
+							if (xhr.status >= 200 && xhr.status <300){
+								alert("Alumno Borrado");
+							}else{
+								alert("Error al borrar alumno");
+							}
+							console.log(xhr.status);
+						} 
+					});
+				}else{
+					alert("La matricula esta en blanco");
+				}
+			}else{
+				alert("La matricula excede el cupo");
+			}
+		}
+
+		
+		function addAlumno(matricula, nombre, carrera){
+			if (matricula < 2147483647) {
+				if (matricula.length != 0 && nombre.length != 0 && carrera.length != 0) {
+					var parametros = {
+						"matricula" : matricula,
+						"nombre" : nombre,
+						"carrera" : carrera
+					};
+
+					$.ajax
+					({
+						data: JSON.stringify(parametros),
+						type: "post",
+						url: "http://localhost:8080/v1/alumnos",
+						dataType: 'application/json',
+						headers : {
+							"Accept" : 'application/json',
+							"Content-Type" : "application/json"
+						},
+						success: function (response){
+
+						},
+						complete: function(xhr, textStatus) {
+							if (xhr.status >= 200 && xhr.status <300 ){
+								alert("Alumno Añadido");
+							}else{
+								alert("Error al añadir alumno");
+							}
+							console.log(xhr.status);
+						} 
+					});
+				}else{
+					alert("Por favor completa todos los campos");
+				}
+			}else{
+				alert("La matricula excede el cupo");
+			}
+		}
+
+		function updateAlumno(matricula, nombre, carrera){
+			if (matricula < 2147483647) {
+				if (matricula.length != 0 && nombre.length != 0 && carrera.length != 0) {
+					var parametros = {
+					"matricula" : matricula,
+					"nombre" : nombre,
+					"carrera" : carrera
+				};
+
+				$.ajax
+				({
+					data: JSON.stringify(parametros),
+					type: "put",
+					url: "http://localhost:8080/v1/alumnos",
+					dataType: 'application/json',
+					headers : {
+						"Accept" : 'application/json',
+						"Content-Type" : "application/json"
+					},
+					success: function (response){
+						console.log(response);
+					},
+					complete: function(xhr, textStatus) {
+						if (xhr.status >= 200 && xhr.status <300){
+							alert("Alumno Modificado");
+						}else{
+							alert("Error al modificar alumno");
+						}
+						console.log(xhr.status);
+					} 
+				});
+				}else{
+					alert("Por favor comleta todos los campos");
+				}
+				
+			}else{
+				alert("la matricula excede el cupo");
+			}
+			
+			
+		}
+
+
+	</script>
+</body>
+</html>
