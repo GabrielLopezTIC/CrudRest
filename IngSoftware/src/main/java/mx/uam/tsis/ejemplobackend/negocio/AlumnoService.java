@@ -1,6 +1,6 @@
 package mx.uam.tsis.ejemplobackend.negocio;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,9 @@ public class AlumnoService {
 	public Alumno create(Alumno nuevoAlumno) {
 		
 		// Regla de negocio: No se puede crear más de un alumno con la misma matricula
-		Alumno alumno = alumnoRepository.findByMatricula(nuevoAlumno.getMatricula());
-		
-		if(alumno == null) {
+		Optional <Alumno> alumno = alumnoRepository.findById(nuevoAlumno.getMatricula());
+		System.out.println(alumno);
+		if(!alumno.isPresent()) {
 			return alumnoRepository.save(nuevoAlumno);
 		} else {
 			return null;
@@ -36,13 +36,13 @@ public class AlumnoService {
 	 * 
 	 * @return
 	 */
-	public List <Alumno> retrieveAll () {
+	public Iterable <Alumno> retrieveAll () {
 		return alumnoRepository.find();
 	}
 	
 	
-	public Alumno findByMatricula(Integer matricula){
-	    return alumnoRepository.findByMatricula(matricula);
+	public Optional<Alumno> findByMatricula(Integer matricula){
+	    return alumnoRepository.findById(matricula);
 	}
 	
 	/**

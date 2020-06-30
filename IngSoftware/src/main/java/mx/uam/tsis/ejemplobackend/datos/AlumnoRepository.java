@@ -1,9 +1,8 @@
 package mx.uam.tsis.ejemplobackend.datos;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import mx.uam.tsis.ejemplobackend.negocio.modelo.Alumno;
@@ -15,39 +14,38 @@ import mx.uam.tsis.ejemplobackend.negocio.modelo.Alumno;
  *
  */
 @Repository
-public class AlumnoRepository {
+public class AlumnoRepository{
 	
-	// La "base de datos"
-	public Map <Integer, Alumno> alumnoRepository = new HashMap <>();
 
+    @Autowired
+    private IAlumnoRepository repo;
+    
+    
 	/**
 	 * Guarda en la BD
 	 * 
 	 * @param alumno
 	 */
 	public Alumno save(Alumno nuevoAlumno) {
-		alumnoRepository.put(nuevoAlumno.getMatricula(), nuevoAlumno);
-		return nuevoAlumno;
+		return repo.save(nuevoAlumno);
 	}
 	
-	public Alumno findByMatricula(Integer matricula) {
-		return alumnoRepository.get(matricula);
+	public Optional<Alumno> findById(Integer matricula) {
+		return repo.findById(matricula);
 	}
 	
-	public List <Alumno> find() {
-		return new ArrayList <> (alumnoRepository.values());
+	public Iterable <Alumno> find() {
+		return repo.findAll();
 	}
 	
 	// falta update
 	public Alumno update(Alumno alumno) {
-	    alumnoRepository.put(alumno.getMatricula(), alumno);
-	    return alumno;
+	    return repo.save(alumno);
 	}
 	
 	// falta delete
 	public void delete(Integer matricula) {
-	    Alumno alumno = alumnoRepository.get(matricula);
-	    alumnoRepository.remove(alumno.getMatricula(), alumno);
+	    repo.deleteById(matricula);
 	}
  
 }
