@@ -20,26 +20,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 @EnableSwagger2WebMvc
 public class Configuration {
     @Bean
-	public Docket api() { 
-		return new Docket(DocumentationType.SWAGGER_2)  
-				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any())
-				.build()
-				.apiInfo(apiInfo());                                           
-	}
-	
-	private ApiInfo apiInfo() {
-	    return new ApiInfo(
-	      "Api rest Alumnos", 
-	      "Api CRUD del curso de TSIS", 
-	      "API TSIS", 
-	      "Terms of service", 
-	      new Contact("Gabriel López",
-		      "https://ticsolucionesweb.000webhostapp.com/",
-		      "gabriellopeztic@gmail.com"), 
-	      "License of API", "API license URL", Collections.emptyList());
-}
-    
+    public Docket api() {
+	return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
+		.paths(PathSelectors.any()).build().apiInfo(apiInfo());
+    }
+
+    private ApiInfo apiInfo() {
+	return new ApiInfo("Api rest Alumnos", "Api CRUD del curso de TSIS", "API TSIS", "Terms of service",
+		new Contact("Gabriel López", "https://ticsolucionesweb.000webhostapp.com/",
+			"gabriellopeztic@gmail.com"),
+		"License of API", "API license URL", Collections.emptyList());
+    }
 
 }

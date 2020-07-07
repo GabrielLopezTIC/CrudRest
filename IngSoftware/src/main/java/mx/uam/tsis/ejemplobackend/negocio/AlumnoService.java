@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import mx.uam.tsis.ejemplobackend.datos.AlumnoRepository;
 import mx.uam.tsis.ejemplobackend.negocio.modelo.Alumno;
 
+
 @Service
 public class AlumnoService {
 
@@ -23,7 +24,8 @@ public class AlumnoService {
 		
 		// Regla de negocio: No se puede crear más de un alumno con la misma matricula
 		Optional <Alumno> alumno = alumnoRepository.findById(nuevoAlumno.getMatricula());
-		System.out.println(alumno);
+		
+		
 		if(!alumno.isPresent()) {
 			return alumnoRepository.save(nuevoAlumno);
 		} else {
@@ -40,7 +42,11 @@ public class AlumnoService {
 		return alumnoRepository.find();
 	}
 	
-	
+	/**
+	 * 
+	 * @param matricula
+	 * @return
+	 */
 	public Optional<Alumno> findByMatricula(Integer matricula){
 	    return alumnoRepository.findById(matricula);
 	}
@@ -51,10 +57,23 @@ public class AlumnoService {
 	 * @return
 	 */
 	public Alumno update(Alumno alumno) {
-	    return alumnoRepository.save(alumno);
+	    if(alumnoRepository.findById(alumno.getMatricula()).isPresent())
+		return alumnoRepository.save(alumno);
+	    return null;
 	}
 	
-	public void delete(Integer matricula) {
-	    alumnoRepository.delete(matricula);
+	/**
+	 * 
+	 * @param matricula
+	 * @return
+	 */
+	public boolean delete(Integer matricula) {
+	    if(alumnoRepository.findById(matricula).isPresent()) {
+		alumnoRepository.delete(matricula);
+		return true;
+	    }else {
+		return false;
+	    }
+	    
 	}
 }
