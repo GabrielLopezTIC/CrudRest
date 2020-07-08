@@ -12,8 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import mx.uam.tsis.ejemplobackend.datos.GrupoRepository;
+import mx.uam.tsis.ejemplobackend.negocio.modelo.Alumno;
 import mx.uam.tsis.ejemplobackend.negocio.modelo.Grupo;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +31,7 @@ public class GrupoServiceTest {
     //// Create
     @Test
     public void testSuccesfulCreate() {
-	//grupo no nulo
+	// grupo no nulo
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
@@ -43,7 +43,7 @@ public class GrupoServiceTest {
 
     @Test
     public void testUnSuccesfulCreate() {
-	//grupo nullo
+	// grupo nullo
 	Grupo grupo = null;
 	assertEquals(Optional.empty(), grupoService.create(grupo));
     }
@@ -52,7 +52,7 @@ public class GrupoServiceTest {
 
     @Test
     public void testSuccesfulFindAll() {
-	
+
 	List<Grupo> grupos = new ArrayList<Grupo>();
 
 	when(grupoRepositoryMock.find()).thenReturn(grupos);
@@ -72,7 +72,7 @@ public class GrupoServiceTest {
 
 	Optional<Grupo> grupOpt = Optional.of(grupo);
 
-	//matricula existente
+	// matricula existente
 	when(grupoRepositoryMock.findById(1)).thenReturn(grupOpt);
 
 	assertEquals(grupOpt, grupoService.findById(1));
@@ -84,7 +84,7 @@ public class GrupoServiceTest {
 
 	Optional<Grupo> grupOpt = Optional.empty();
 
-	//matriucula nulla
+	// matriucula nulla
 	assertEquals(grupOpt, grupoService.findById(null));
     }
     // Update
@@ -97,7 +97,6 @@ public class GrupoServiceTest {
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
-	
 
 	Optional<Grupo> grupOpt = Optional.of(grupo);
 
@@ -105,7 +104,6 @@ public class GrupoServiceTest {
 	when(grupoRepositoryMock.save(grupo)).thenReturn(grupo);
 
 	assertEquals(grupOpt, grupoService.update(grupo));
-
 
     }
 
@@ -117,7 +115,6 @@ public class GrupoServiceTest {
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
-	
 
 	Optional<Grupo> grupOpt = Optional.empty();
 
@@ -142,7 +139,7 @@ public class GrupoServiceTest {
 	when(grupoRepositoryMock.findById(1)).thenReturn(grupOpt);
 
 	assertEquals(true, grupoService.delete(1));
-    
+
     }
 
     /**
@@ -155,7 +152,58 @@ public class GrupoServiceTest {
 	when(grupoRepositoryMock.findById(1)).thenReturn(boletoOpt);
 
 	assertEquals(false, grupoService.delete(1));
- 
+
     }
 
+    @Test
+    public void testSuccesfulAddStudentToGroup() {
+
+	List<Alumno> alumnos = new ArrayList<Alumno>();
+
+	Grupo grupo = new Grupo();
+	grupo.setId(1);
+	grupo.setAlumnos(alumnos);
+	grupo.setClave("TST01");
+
+	Alumno alumno = new Alumno();
+	alumno.setCarrera("Computación");
+	alumno.setMatricula(12345678);
+	alumno.setNombre("Pruebin");
+
+	Optional<Alumno> alOpt = Optional.of(alumno);
+
+	// Stubbing para el alumnoService
+	when(alumnoServiceMock.findByMatricula(12345678)).thenReturn(alOpt);
+
+	// Stubbing para grupoRepository
+	when(grupoRepositoryMock.findById(grupo.getId())).thenReturn(Optional.of(grupo));
+
+	boolean result = grupoService.addStudentToGroup(1, 12345678);
+
+	assertEquals(true, result);
+
+	assertEquals(grupo.getAlumnos().get(0), alumno);
+
+    }
+
+    @Test
+    public void testUnsuccesfulAddStudentToGroup() {
+
+	Alumno alumno = new Alumno();
+	alumno.setCarrera("Computación");
+	alumno.setMatricula(12345678);
+	alumno.setNombre("Pruebin");
+
+	// Stubbing para el alumnoService
+	when(alumnoServiceMock.findByMatricula(12345678)).thenReturn(Optional.of(alumno));
+
+	Optional<Grupo> grupo = Optional.empty();
+	// Stubbing para grupoRepository
+	when(grupoRepositoryMock.findById(1)).thenReturn(grupo);
+
+	boolean result = grupoService.addStudentToGroup(1, 12345678);
+
+	assertEquals(false, result);
+
+    }
 }
