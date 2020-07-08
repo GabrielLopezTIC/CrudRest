@@ -19,26 +19,31 @@ public class GrupoService {
 	@Autowired
 	private AlumnoService alumnoService;
 	
-	public Grupo create(Grupo nuevoGrupo) {
+	public Optional<Grupo> create(Grupo nuevoGrupo) {
 	    if(nuevoGrupo != null)
-		return grupoRepository.save(nuevoGrupo);
+		return Optional.of(grupoRepository.save(nuevoGrupo));
 	    else
-		return null;
+		return Optional.empty();
 	}
 
-	public Iterable <Grupo> findAll () {
-		return grupoRepository.find();
+	public Optional<Iterable <Grupo>> findAll () {
+		return Optional.of(grupoRepository.find());
 	}
 	
 	public Optional<Grupo> findById(Integer id){
-	    return grupoRepository.findById(id);
+	    if(id != null) {
+		return grupoRepository.findById(id);
+	    }else {
+		return Optional.empty();
+	    }
+	    
 	}
 	
-	public Grupo update(Grupo grupo) {
+	public Optional<Grupo> update(Grupo grupo) {
 	    if((grupoRepository.findById(grupo.getId()).isPresent())) {
-		return grupoRepository.save(grupo);
+		return Optional.of(grupoRepository.save(grupo));
 	    }else {
-		return null;
+		return Optional.empty();
 	    }
 	    
 	}

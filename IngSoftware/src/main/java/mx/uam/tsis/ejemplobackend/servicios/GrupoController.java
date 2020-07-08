@@ -32,18 +32,18 @@ public class GrupoController {
     @ApiOperation(value = "Crear grupo", notes = "Permite crear un nuevo grupo") // Documentacion del api
     @PostMapping(path = "/grupos", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity <?> create(@RequestBody @Valid Grupo nuevoGrupo) {
-	Grupo grupo = null;
-	if ((grupo =grupoService.create(nuevoGrupo)) != null) {
+	Optional<Grupo> grupo = grupoService.create(nuevoGrupo);
+	if (grupo.isPresent()) {
 	    return ResponseEntity.status(HttpStatus.CREATED).body(grupo);
 	} else {
-	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No se creo el grupo");
+	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
     }
 
     @ApiOperation(value = "Mostrar Todos", notes = "Muestra la lista del total de grupose")
     @GetMapping(path = "/grupos", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findAll() {
-	if (grupoService.findAll() != null) {
+	if (grupoService.findAll().isPresent()) {
 	    return ResponseEntity.status(HttpStatus.OK).body(grupoService.findAll());
 	} else {
 	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -64,8 +64,8 @@ public class GrupoController {
     @ApiOperation(value = "Actualizar grupo", notes = "Permite actualizar los datos de un grupo")
     @PutMapping(path = "/grupos", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@RequestBody @Valid Grupo nuevoGrupo) {
-	Grupo grupo = null;
-	if ((grupo = grupoService.update(nuevoGrupo)) != null) {
+	Optional<Grupo> grupo = grupoService.update(nuevoGrupo);
+	if (grupo.isPresent()) {
 	    return ResponseEntity.status(HttpStatus.CREATED).body(grupo);
 	} else {
 	    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -75,7 +75,7 @@ public class GrupoController {
     @ApiOperation(value = "Eliminar grupo", notes = "Permite eliminar un grupo en base a su id")
     @DeleteMapping("/grupos/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id)  {
-
+	
 	Optional<Grupo> grupo = grupoService.findById(id);
 
 	

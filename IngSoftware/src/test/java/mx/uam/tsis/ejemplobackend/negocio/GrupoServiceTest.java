@@ -1,16 +1,18 @@
 package mx.uam.tsis.ejemplobackend.negocio;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+
 import mx.uam.tsis.ejemplobackend.datos.GrupoRepository;
 import mx.uam.tsis.ejemplobackend.negocio.modelo.Grupo;
 
@@ -25,111 +27,135 @@ public class GrupoServiceTest {
 
     @InjectMocks
     private GrupoService grupoService;
-    
+
     //// Create
     @Test
     public void testSuccesfulCreate() {
+	//grupo no nulo
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
-	grupo = grupoService.create(grupo);
+
+	when(grupoRepositoryMock.save(grupo)).thenReturn(grupo);
+
+	assertEquals(Optional.of(grupo), grupoService.create(grupo));
     }
 
     @Test
     public void testUnSuccesfulCreate() {
+	//grupo nullo
 	Grupo grupo = null;
-	grupo = grupoService.create(grupo);
+	assertEquals(Optional.empty(), grupoService.create(grupo));
     }
 
     ///// FindAll
+
     @Test
     public void testSuccesfulFindAll() {
-	Iterable<Grupo> iteratorMock = null;
+	
+	List<Grupo> grupos = new ArrayList<Grupo>();
 
-	when(grupoRepositoryMock.find()).thenReturn(iteratorMock);
+	when(grupoRepositoryMock.find()).thenReturn(grupos);
 
-	iteratorMock = grupoService.findAll();
+	Optional<Iterable<Grupo>> grupOpt = Optional.of(grupos);
+
+	assertEquals(grupOpt, grupoService.findAll());
 
     }
 
-    ///FindById
+    /// FindById
     @Test
     public void testSuccesfulFindById() {
-
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
-	Optional<Grupo> grup = Optional.of(grupo);
 
-	when(grupoRepositoryMock.findById(1)).thenReturn(grup);
+	Optional<Grupo> grupOpt = Optional.of(grupo);
 
-	grup = grupoService.findById(1);
+	//matricula existente
+	when(grupoRepositoryMock.findById(1)).thenReturn(grupOpt);
+
+	assertEquals(grupOpt, grupoService.findById(1));
+
     }
-    
-    //Update
-    
+
+    @Test
+    public void testUnSuccesfullFindById() {
+
+	Optional<Grupo> grupOpt = Optional.empty();
+
+	//matriucula nulla
+	assertEquals(grupOpt, grupoService.findById(null));
+    }
+    // Update
+
     /**
      * Caso si existe el grupo que queremos actualizar
      */
     @Test
     public void testSuccesfulUpdate() {
-
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
-	Optional<Grupo> grup = Optional.of(grupo);
 	
-	when(grupoRepositoryMock.save(grupo)).thenReturn(grupo);
-	when(grupoRepositoryMock.findById(grupo.getId())).thenReturn(grup);
 
-	grupo = grupoService.update(grupo);
+	Optional<Grupo> grupOpt = Optional.of(grupo);
+
+	when(grupoRepositoryMock.findById(1)).thenReturn(grupOpt);
+	when(grupoRepositoryMock.save(grupo)).thenReturn(grupo);
+
+	assertEquals(grupOpt, grupoService.update(grupo));
+
+
     }
-    
+
     /**
      * Caso: No existe el grupo que queremos actualizar
      */
     @Test
     public void testUnSuccesfulUpdate() {
-
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
 	
-	
-	Optional<Grupo> grup = Optional.empty();
-	
-	when(grupoRepositoryMock.findById(grupo.getId())).thenReturn(grup);
-	
-	 assertNull(grupoService.update(grupo));
+
+	Optional<Grupo> grupOpt = Optional.empty();
+
+	when(grupoRepositoryMock.findById(1)).thenReturn(grupOpt);
+
+	assertEquals(grupOpt, grupoService.update(grupo));
+
     }
 
-    ///Delete
+    /// Delete
     /**
-     * Caso:  Si existe el grupo que queremos eliminar
+     * Caso: Si existe el grupo que queremos eliminar
      */
     @Test
     public void testSuccesfulDelete() {
 	Grupo grupo = new Grupo();
 	grupo.setId(1);
 	grupo.setClave("TST01");
-	Optional<Grupo> grup = Optional.of(grupo);
 
-	when(grupoRepositoryMock.findById(1)).thenReturn(grup);
-	assertTrue(grupoService.delete(1));
-    }
+	Optional<Grupo> grupOpt = Optional.of(grupo);
+
+	when(grupoRepositoryMock.findById(1)).thenReturn(grupOpt);
+
+	assertEquals(true, grupoService.delete(1));
     
+    }
+
     /**
-     * Caso:  No existe el grupo que queremos eliminar
+     * Caso: No existe el grupo que queremos eliminar
      */
     @Test
     public void testUnSuccesfulDelete() {
-	Grupo grupo = new Grupo();
-	grupo.setId(1);
-	grupo.setClave("TST01");
-	Optional<Grupo> grup = Optional.empty();
+	Optional<Grupo> boletoOpt = Optional.empty();
 
-	when(grupoRepositoryMock.findById(1)).thenReturn(grup);
-	assertFalse(grupoService.delete(1));
+	when(grupoRepositoryMock.findById(1)).thenReturn(boletoOpt);
+
+	assertEquals(false, grupoService.delete(1));
+ 
     }
 
 }
